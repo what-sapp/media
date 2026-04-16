@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>PHANTOM - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0a0a0f;
+            --card: #12121a;
+            --border: #2a2a3a;
+            --text: #ffffff;
+            --text-muted: #a0a0b0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.75rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+        }
+
+        .platform-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-available { background: var(--success); }
+        .status-maintenance { background: var(--warning); }
+        .status-disabled { background: var(--text-muted); }
+
+        .progress-bar {
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            height: 20px;
+            transition: width 0.3s;
+        }
+
+        .badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .badge-admin { background: var(--danger); }
+        .badge-dev { background: var(--primary); }
+        .badge-user { background: var(--border); }
+
+        .api-key-box {
+            background: var(--dark);
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            word-break: break-all;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            table {
+                font-size: 0.7rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/uthuman.svg" alt="UTHUMAN" onerror="this.src='https://placehold.co/35x35/667eea/white?text=U'">
+            <span class="logo-text">PHANTOM Admin</span>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/developer">API Console</a>
+            <a href="/admin-panel" style="color: var(--danger);">Admin</a>
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>🔑 Admin API Key</h2>
+                <button class="btn btn-primary btn-sm" onclick="copyAdminKey()">📋 Copy</button>
+            </div>
+            <div class="card-body">
+                <div class="api-key-box" id="adminApiKey">Loading...</div>
+                <button class="btn btn-danger btn-sm" onclick="regenerateAdminKey()">🔄 Regenerate</button>
+                <p style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--text-muted);">Unlimited rate limit • Full access</p>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">-</div>
+                <div>Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalDevs">-</div>
+                <div>Developers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalDownloads">-</div>
+                <div>Downloads Today</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>📊 Platform Requests (Today)</h2>
+            </div>
+            <div class="card-body">
+                <div id="platformStats"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>🎮 Platform Control</h2>
+            </div>
+            <div class="card-body">
+                <div style="overflow-x: auto;">
+                    <table id="platformTable">
+                        <thead>
+                            <tr><th>Platform</th><th>Status</th><th>Today</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>👥 All Users</h2>
+                <button class="btn btn-primary btn-sm" onclick="refreshUsers()">🔄 Refresh</button>
+            </div>
+            <div class="card-body">
+                <div style="overflow-x: auto;">
+                    <table id="usersTable">
+                        <thead>
+                            <tr><th>Email</th><th>Role</th><th>API Key</th><th>Today</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>🚫 Banned Users</h2>
+            </div>
+            <div class="card-body">
+                <div style="overflow-x: auto;">
+                    <table id="bannedTable">
+                        <thead>
+                            <tr><th>Email</th><th>Reason</th><th>Expires</th><th>Action</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>🔥 Top Users (Today)</h2>
+            </div>
+            <div class="card-body">
+                <div style="overflow-x: auto;">
+                    <table id="topUsersTable">
+                        <thead>
+                            <tr><th>Rank</th><th>Email</th><th>Role</th><th>Requests</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadAdminData() {
+            try {
+                const statsRes = await fetch('/admin/stats');
+                const stats = await statsRes.json();
+                
+                if (stats.success) {
+                    document.getElementById('totalUsers').innerText = stats.stats.total_users;
+                    document.getElementById('totalDevs').innerText = stats.stats.total_developers;
+                    document.getElementById('totalDownloads').innerText = stats.stats.total_downloads_today;
+                    
+                    let platformHtml = '';
+                    stats.stats.platform_stats_today.forEach(p => {
+                        const percent = stats.stats.total_downloads_today > 0 
+                            ? (p.total_requests / stats.stats.total_downloads_today * 100).toFixed(1) 
+                            : 0;
+                        platformHtml += `
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span>${p.platform.toUpperCase()}</span>
+                                    <span>${p.total_requests} requests (${percent}%)</span>
+                                </div>
+                                <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%;"></div></div>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('platformStats').innerHTML = platformHtml || '<p>No data yet</p>';
+                }
+                
+                const usersRes = await fetch('/admin/users');
+                const users = await usersRes.json();
+                
+                if (users.success) {
+                    const activeUsers = users.users.filter(u => !u.banned_until);
+                    const bannedUsers = users.users.filter(u => u.banned_until);
+                    
+                    const userRows = activeUsers.map(u => `
+                        <tr>
+                            <td>${u.email || 'N/A'}</td>
+                            <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : (u.role === 'developer' ? 'badge-dev' : 'badge-user')}">${u.role}</span></td>
+                            <td><code style="font-size: 0.65rem;">${u.api_key ? u.api_key.slice(0, 12) + '...' : '-'}</code></td>
+                            <td>${u.today_requests || 0}</td>
+                            <td>
+                                ${u.role === 'user' ? `<button class="btn btn-success btn-sm" onclick="makeDev('${u.id}')">Make Dev</button>` : ''}
+                                ${u.role === 'developer' ? `<button class="btn btn-warning btn-sm" onclick="demote('${u.id}')">Demote</button>` : ''}
+                                <button class="btn btn-danger btn-sm" onclick="banUser('${u.id}')">Ban</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    document.getElementById('usersTable').querySelector('tbody').innerHTML = userRows || '<tr><td colspan="5">No users</td></tr>';
+                    
+                    const bannedRows = bannedUsers.map(u => `
+                        <tr>
+                            <td>${u.email || 'N/A'}</td>
+                            <td>${u.ban_reason || 'No reason'}</td>
+                            <td>${u.banned_until ? new Date(u.banned_until).toLocaleString() : 'Permanent'}</td>
+                            <td><button class="btn btn-success btn-sm" onclick="unbanUser('${u.id}')">Unban</button></td>
+                        </tr>
+                    `).join('');
+                    document.getElementById('bannedTable').querySelector('tbody').innerHTML = bannedRows || '<tr><td colspan="4">No banned users</td></tr>';
+                }
+                
+                const platformsRes = await fetch('/admin/platforms');
+                const platforms = await platformsRes.json();
+                
+                if (platforms.success) {
+                    const platformRows = platforms.platforms.map(p => `
+                        <tr>
+                            <td><strong>${p.platform}</strong></td>
+                            <td>
+                                <span class="platform-status ${p.available ? (p.maintenance ? 'status-maintenance' : 'status-available') : 'status-disabled'}"></span>
+                                ${p.available ? (p.maintenance ? 'Maintenance' : 'Available') : 'Disabled'}
+                            </td>
+                            <td>${p.today_requests || 0}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="togglePlatform('${p.platform}', ${!p.available})">
+                                    ${p.available ? 'Disable' : 'Enable'}
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="setMaintenance('${p.platform}', ${!p.maintenance})">
+                                    ${p.maintenance ? 'Remove Maint' : 'Maintenance'}
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    document.getElementById('platformTable').querySelector('tbody').innerHTML = platformRows;
+                }
+                
+                const topRes = await fetch('/admin/stats');
+                const topData = await topRes.json();
+                if (topData.success && topData.stats.top_users) {
+                    const topRows = topData.stats.top_users.map((u, i) => `
+                        <tr>
+                            <td>#${i + 1}</td>
+                            <td>${u.email || 'Anonymous'}</td>
+                            <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : (u.role === 'developer' ? 'badge-dev' : 'badge-user')}">${u.role}</span></td>
+                            <td><strong>${u.requests}</strong></td>
+                        </tr>
+                    `).join('');
+                    document.getElementById('topUsersTable').querySelector('tbody').innerHTML = topRows || '<tr><td colspan="4">No data</td></tr>';
+                }
+            } catch (error) {
+                console.error('Failed to load admin data:', error);
+            }
+        }
+        
+        async function makeDev(userId) {
+            const res = await fetch('/admin/users/make-dev', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            });
+            if (res.ok) loadAdminData();
+        }
+        
+        async function demote(userId) {
+            const res = await fetch('/admin/users/demote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            });
+            if (res.ok) loadAdminData();
+        }
+        
+        async function banUser(userId) {
+            const reason = prompt('Ban reason:', 'Violation of terms');
+            if (!reason) return;
+            const hours = prompt('Ban duration (hours):', '24');
+            const res = await fetch('/admin/users/ban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, reason, durationHours: parseInt(hours) || 24 })
+            });
+            if (res.ok) loadAdminData();
+        }
+        
+        async function unbanUser(userId) {
+            if (!confirm('Unban this user?')) return;
+            const res = await fetch('/admin/users/unban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            });
+            if (res.ok) loadAdminData();
+        }
+        
+        async function togglePlatform(platform, available) {
+            await fetch('/admin/platforms/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ platform, available, maintenance: false, error: false })
+            });
+            loadAdminData();
+        }
+        
+        async function setMaintenance(platform, maintenance) {
+            await fetch('/admin/platforms/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ platform, available: !maintenance, maintenance, error: false })
+            });
+            loadAdminData();
+        }
+        
+        async function copyAdminKey() {
+            const key = document.getElementById('adminApiKey').innerText;
+            if (key && key !== 'Loading...') {
+                await navigator.clipboard.writeText(key);
+                alert('Admin API key copied!');
+            }
+        }
+        
+        async function regenerateAdminKey() {
+            if (!confirm('Regenerate admin API key?')) return;
+            const res = await fetch('/user/regenerate-key', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('adminApiKey').innerText = data.api_key;
+                alert('New admin key generated!');
+            }
+        }
+        
+        async function loadAdminKey() {
+            const res = await fetch('/user/me');
+            const data = await res.json();
+            if (data.success && data.user.api_key) {
+                document.getElementById('adminApiKey').innerText = data.user.api_key;
+            }
+        }
+        
+        function refreshUsers() {
+            loadAdminData();
+        }
+        
+        loadAdminKey();
+        loadAdminData();
+    </script>
+</body>
+</html>

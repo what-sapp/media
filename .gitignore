@@ -1,0 +1,9 @@
+node_modules/
+.env
+downloads/*.mp4
+downloads/*.mp3
+downloads/*.zip
+logs/*.log
+database/*.db
+.DS_Store
+*.log

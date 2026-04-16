@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>PHANTOM Media Downloader - Download from Any Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #0a0a0f;
+            --darker: #050508;
+            --card: #12121a;
+            --border: #2a2a3a;
+            --text: #ffffff;
+            --text-muted: #a0a0b0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 80% 50%, rgba(118, 75, 162, 0.15) 0%, transparent 50%);
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-5%, -5%); }
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn-nav {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 0.5rem 1.25rem;
+            border-radius: 30px;
+            color: white !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-logo {
+            margin-bottom: 2rem;
+        }
+
+        .hero-logo img {
+            height: 100px;
+            width: auto;
+            filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.5));
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .btn-hero {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Features Grid */
+        .features {
+            padding: 4rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Owner Section */
+        .owner-section {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .owner-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 30px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/uthuman.svg" alt="UTHUMAN" onerror="this.src='https://placehold.co/40x40/667eea/white?text=U'">
+            <span class="logo-text">PHANTOM</span>
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/login" class="btn-nav">Get Started →</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-logo">
+                <img src="/uthuman.svg" alt="UTHUMAN" onerror="this.src='https://placehold.co/100x100/667eea/white?text=U'">
+            </div>
+            <h1>PHANTOM Media Downloader</h1>
+            <p>Download videos and audio from YouTube, Instagram, TikTok, Twitter, Facebook and more — free and fast</p>
+            <a href="/login" class="btn-hero">🚀 Start Downloading →</a>
+        </div>
+    </div>
+
+    <div class="features">
+        <h2 class="section-title">Supported Platforms</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📺</div>
+                <h3>YouTube</h3>
+                <p>Download videos in HD, 4K, or extract audio</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📸</div>
+                <h3>Instagram</h3>
+                <p>Save reels, posts, and stories</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎵</div>
+                <h3>TikTok</h3>
+                <p>Download videos without watermark</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🐦</div>
+                <h3>Twitter/X</h3>
+                <p>Download videos and GIFs</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📘</div>
+                <h3>Facebook</h3>
+                <p>Save videos from Facebook</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <h3>Developer API</h3>
+                <p>Integrate into your own apps</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats">
+        <h2 class="section-title">Platform Stats</h2>
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-item">
+                <div class="stat-number" id="totalDownloads">0</div>
+                <p>Total Downloads</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="activeUsers">0</div>
+                <p>Active Users</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="supportedPlatforms">6</div>
+                <p>Supported Platforms</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="owner-section">
+        <div class="owner-card">
+            <img src="/uthuman.svg" alt="UTHUMAN" style="height: 60px; margin-bottom: 1rem;" onerror="this.style.display='none'">
+            <h3>👑 Owner</h3>
+            <h2>UTHUMAN</h2>
+            <p style="color: var(--text-muted); margin: 0.5rem 0;">Need help? Contact me on WhatsApp</p>
+            <a href="https://wa.me/256752792178" class="whatsapp-btn" target="_blank">
+                💬 Chat on WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2024 PHANTOM Media Downloader | Created by UTHUMAN</p>
+        <p style="margin-top: 0.5rem;">Your trusted media download solution</p>
+    </div>
+
+    <script>
+        async function loadStats() {
+            try {
+                const res = await fetch('/admin/stats');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.stats) {
+                        document.getElementById('totalDownloads').innerText = data.stats.total_downloads_today || 0;
+                        document.getElementById('activeUsers').innerText = data.stats.total_users || 0;
+                    }
+                }
+            } catch (error) {
+                console.log('Stats not available');
+            }
+        }
+        
+        loadStats();
+    </script>
+</body>
+</html>
